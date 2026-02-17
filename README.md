@@ -34,6 +34,132 @@
 - [ ] 安裝 Git (版本控制)
 - [ ] 安裝終端機模擬器 (PuTTY、TeraTerm)
 
+### PlatformIO 安裝指南 (推薦新手)
+
+PlatformIO 是一個強大的嵌入式開發環境，支援 STM32、Arduino 等多種開發板，安裝簡單，適合初學者。
+
+#### 1. 安裝 VS Code
+```bash
+# Linux
+sudo apt-get update
+sudo apt-get install -y code
+
+# 或從官網下載: https://code.visualstudio.com/
+```
+
+#### 2. 安裝 PlatformIO 擴充
+1. 打開 VS Code
+2. 點擊左側 Extensions 圖標 (或按 `Ctrl+Shift+X`)
+3. 搜尋 "PlatformIO IDE"
+4. 點擊 Install
+
+#### 3. 建立第一個專案
+```bash
+# 方法一：使用命令列
+pio project init --board nucleo_f401re -d ~/stm32-blinky
+
+# 方法二：使用 VS Code
+# 1. 按 F1 或 Ctrl+Shift+P
+# 2. 輸入 "PlatformIO: New Project"
+# 3. 選擇 Board: "Nucleo F401RE"
+# 4. 選擇 Framework: "Arduino" 或 "STM32Cube"
+```
+
+#### 4. PlatformIO 目錄結構
+```
+stm32-blinky/
+├── platformio.ini    # 專案設定檔
+├── src/
+│   └── main.cpp     # 你的程式碼
+├── lib/             # 自訂函式庫
+├── include/         # 標頭檔
+└── .pio/           # 建構輸出目錄
+```
+
+#### 5. 範例程式碼
+```cpp
+// src/main.cpp - LED 閃爍
+#include <Arduino.h>
+
+#define LED_PIN PC13  // Nucleo-F401RE 使用者按鈕位置
+
+void setup() {
+  pinMode(LED_PIN, OUTPUT);
+}
+
+void loop() {
+  digitalWrite(LED_PIN, HIGH);
+  delay(500);
+  digitalWrite(LED_PIN, LOW);
+  delay(500);
+}
+```
+
+#### 6. 常用指令
+```bash
+# 編譯
+pio run
+
+# 僅編譯 (快速)
+pio run --target compile
+
+# 燒錄到開發板
+pio run --target upload
+
+# 清除建構檔案
+pio run --target clean
+
+# 監看序列埠輸出
+pio device monitor
+
+# 查看可用序列埠
+pio device list
+```
+
+#### 7. platformio.ini 範例設定
+```ini
+[env:nucleo_f401re]
+platform = ststm32
+board = nucleo_f401re
+framework = arduino
+
+# 監看序列埠
+upload_port = /dev/ttyACM0
+monitor_port = /dev/ttyACM0
+monitor_speed = 115200
+```
+
+#### 8. 常見問題
+
+**Q: 找不到開發板？**
+```bash
+# 查看可用序列埠
+pio device list
+
+# 查看可用開發板
+pio boards | grep nucleo
+```
+
+**Q: 燒錄失敗？**
+1. 確認開發板已連接 USB
+2. 檢查序列埠權限: `sudo chmod 666 /dev/ttyACM0`
+3. 按住開發板的 Reset 鍵再燒錄
+
+**Q: 如何使用 HAL 而非 Arduino API？**
+```ini
+[env:nucleo_f401re]
+platform = ststm32
+board = nucleo_f401re
+framework = stm32cube
+```
+
+#### 9. 進階功能
+- **除錯**: `pio debug`
+- **單元測試**: `pio test`
+- **程式碼分析**: `pio check`
+
+---
+
 ### 基礎知識
 - [ ] 了解 ARM Cortex-M4 架構
 - [ ] 學習 F401RE 規格: 84MHz, 512KB Flash, 96KB RAM
@@ -200,7 +326,8 @@
 
 | 工具 | 用途 |
 |------|---------|
-| STM32CubeIDE | 開發 IDE |
+| VS Code + PlatformIO | 開發 IDE (推薦新手) |
+| STM32CubeIDE | 開發 IDE (官方) |
 | STM32CubeMX | 腳位與時脈設定 |
 | ST-Link Utility | 燒錄程式 |
 | Saleae/Logic | 邏輯分析儀 (可選) |
