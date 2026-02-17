@@ -12,15 +12,29 @@ SIZE = $(PREFIX)-size
 # Flags
 CPU = -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard
 MCUFLAGS = $(CPU) -DSTM32F401xE -DUSE_HAL_DRIVER
-CFLAGS = $(MCUFLAGS) -Wall -Wextra -pedantic -std=gnu11 -O0 -g3
+CFLAGS = $(MCUFLAGS) -Wall -Wextra -pedantic -std=gnu11 -O0 -g3 -I$(HAL_DIR)/CMSIS/Device/ST/STM32F4xx/Include -I$(HAL_DIR)/CMSIS/Include -I$(HAL_DIR)/STM32F4xx_HAL_Driver/Inc
 ASFLAGS = $(MCUFLAGS) -g
 
 # Directories
 SRC_DIR = Core/Src
 INC_DIR = Core/Inc
+HAL_DIR = Core/Lib
 
 # Source files
-SOURCES = $(wildcard $(SRC_DIR)/*.c)
+HAL_SOURCES = \
+	$(HAL_DIR)/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c \
+	$(HAL_DIR)/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c \
+	$(HAL_DIR)/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c \
+	$(HAL_DIR)/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.c \
+	$(HAL_DIR)/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.c \
+	$(HAL_DIR)/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c \
+	$(HAL_DIR)/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.c \
+	$(HAL_DIR)/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.c \
+	$(HAL_DIR)/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c \
+	$(HAL_DIR)/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.c \
+	$(HAL_DIR)/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.c
+
+SOURCES = $(wildcard $(SRC_DIR)/*.c) $(HAL_SOURCES)
 OBJECTS = $(SOURCES:.c=.o)
 
 # Startup and Linker
